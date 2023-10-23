@@ -54,7 +54,10 @@ class NewDataForm extends React.Component {
             value={this.defaultIfEmpty(this.state.data)}
           />
         </FormGroup>
-        <Button>Send</Button>
+        <div style={{display: "flex", justifyContent: "space-between"}}>
+          <Button type="submit">Send</Button>
+          <Button type="button">+</Button>
+        </div>
       </Form>
     );
   }
