@@ -7,9 +7,21 @@ import { API_URL } from "../constants";
 
 class NewDataForm extends React.Component {
   state = {
-    pk: 0,
-    data: ""
+    pk: null,
+    data: [""]
   };
+
+  addNewLine = () => {
+    this.setState(prevState => ({
+      data: [...prevState.data, ""]
+    }));
+  };  
+
+  onChangeLine = (e, index) => {
+    const newData = [...this.state.data];
+    newData[index] = e.target.value;
+    this.setState({ data: newData });
+  };  
 
   componentDidMount() {
     if (this.props.data) {
@@ -24,15 +36,22 @@ class NewDataForm extends React.Component {
 
   createData = e => {
     e.preventDefault();
-    axios.post(API_URL, this.state).then(() => {
+    axios.post(API_URL, this.state.data.map(item => ({ data: item }))).then(() => {
       this.props.resetState();
       this.props.toggle();
     });
   };
-
+  
   editData = e => {
     e.preventDefault();
-    axios.put(API_URL + this.state.pk, this.state).then(() => {
+    axios.put(API_URL + this.props.pk, { data: this.state.data }).then(() => {
+      this.props.resetState();
+      this.props.toggle();
+    });
+  };  
+
+  deleteData = () => {
+    axios.delete(API_URL + this.state.pk + '/').then(() => {
       this.props.resetState();
       this.props.toggle();
     });
@@ -45,22 +64,24 @@ class NewDataForm extends React.Component {
   render() {
     return (
       <Form onSubmit={this.props.data ? this.editData : this.createData}>
-        <FormGroup>
-          <Label for="data">Data:</Label>
-          <Input
-            type="text"
-            name="data"
-            onChange={this.onChange}
-            value={this.defaultIfEmpty(this.state.data)}
-          />
-        </FormGroup>
+        {this.state.data.map((line, index) => (
+          <FormGroup key={index}>
+            <Label for={`data${index}`}>Data:</Label>
+            <Input
+              type="text"
+              name={`data${index}`}
+              onChange={e => this.onChangeLine(e, index)}
+              value={this.defaultIfEmpty(line)}
+            />
+          </FormGroup>
+        ))}
         <div style={{display: "flex", justifyContent: "space-between"}}>
           <Button type="submit">Send</Button>
-          <Button type="button">+</Button>
+          <Button type="button" onClick={this.addNewLine}>+</Button>
         </div>
       </Form>
     );
-  }
+  }  
 }
 
 export default NewDataForm;

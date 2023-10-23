@@ -33,10 +33,7 @@ class DataList extends Component {
                     resetState={this.props.resetState}
                   />
                   &nbsp;&nbsp;
-                  <ConfirmRemovalModal
-                    pk={d.pk}
-                    resetState={this.props.resetState}
-                  />
+                  <ConfirmRemovalModal pk={d.pk} resetState={this.props.resetState} />
                 </td>
               </tr>
             ))
